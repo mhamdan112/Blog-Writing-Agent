@@ -19,6 +19,15 @@ supabase = create_client(supabase_url, supabase_key)
 # ✅ CREATE APP FIRST
 app = FastAPI()
 
+
+@app.middleware("http")
+async def strip_vercel_api_prefix(request, call_next):
+    """Map Vercel's /api/* function path to FastAPI's route paths."""
+    path = request.scope["path"]
+    if path == "/api" or path.startswith("/api/"):
+        request.scope["path"] = path[4:] or "/"
+    return await call_next(request)
+
 # ✅ THEN middleware
 app.add_middleware(
     CORSMiddleware,
