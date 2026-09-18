@@ -7,6 +7,5 @@
     "api/index.py": {
       "maxDuration": 300
     }
-  },
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  }
 }

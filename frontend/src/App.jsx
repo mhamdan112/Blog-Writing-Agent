@@ -55,7 +55,10 @@ export default function App() {
         body: JSON.stringify({ topic }),
         signal: controller.signal,
       });
-      if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok || !res.body) {
+        const details = await res.text();
+        throw new Error(`HTTP ${res.status}${details ? `: ${details.slice(0, 200)}` : ""}`);
+      }
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
@@ -87,7 +90,7 @@ export default function App() {
         setStages((prev) =>
           prev.map((s) => (s.status === "running" ? { ...s, status: "error" } : s))
         );
-        alert("Generation failed");
+        alert(`Generation failed: ${err.message}`);
       }
     }
 
