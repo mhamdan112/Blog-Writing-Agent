@@ -1,1 +1,12 @@
--r backend/requirements.txt
+fastapi
+uvicorn[standard]
+python-dotenv
+pydantic
+google-genai
+langgraph
+langchain-core
+langchain-groq
+langchain-community
+tavily-python
+supabase
+requests
