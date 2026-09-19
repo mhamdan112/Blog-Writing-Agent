@@ -19,6 +19,7 @@ export default function App() {
   const [files, setFiles] = useState([]);
   const [history, setHistory] = useState([]);
   const [stages, setStages] = useState([]); // { key, label, status: pending|running|done|skipped|error }
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const abortRef = useRef(null);
 
   const loadFiles = async () => {
@@ -190,16 +191,39 @@ export default function App() {
     : "";
 
   return (
-    <div style={{ display: "flex", height: "100vh", fontFamily: "sans-serif" }}>
+    <div className="app">
+      {/* Mobile-only header with hamburger to open the blog drawer */}
+      <header className="mobile-header">
+        <button
+          className="hamburger"
+          aria-label="Toggle blog list"
+          aria-expanded={sidebarOpen}
+          onClick={() => setSidebarOpen(true)}
+        >
+          ☰
+        </button>
+        <div className="app-title">📝 Blog Writing Agent</div>
+      </header>
+
       {/* SIDEBAR */}
-      <div style={{ width: 280, borderRight: "1px solid #ddd", padding: 20, overflow: "auto" }}>
-        <h3>📚 Generated Blogs</h3>
+      <aside className={`sidebar${sidebarOpen ? " open" : ""}`}>
+        <div className="sidebar-header">
+          <h3>📚 Generated Blogs</h3>
+          <button
+            className="sidebar-close"
+            aria-label="Close blog list"
+            onClick={() => setSidebarOpen(false)}
+          >
+            ✕
+          </button>
+        </div>
         {files.length === 0 && <p>No blogs yet.</p>}
         {files.map((blog) => (
           <div key={blog.id} style={{ marginBottom: 8 }}>
             <button
-              style={{ width: "100%", textAlign: "left" }}
+              className="blog-item"
               onClick={async () => {
+                setSidebarOpen(false);
                 const res = await fetch(`${API_URL}/file/${blog.id}`);
                 setSelectedBlog(await res.text());
               }}
@@ -208,12 +232,17 @@ export default function App() {
             </button>
           </div>
         ))}
-      </div>
+      </aside>
+      {/* Dim overlay behind the mobile drawer */}
+      <div
+        className={`backdrop${sidebarOpen ? " show" : ""}`}
+        onClick={() => setSidebarOpen(false)}
+      />
 
       {/* MAIN AREA */}
-      <div style={{ flex: 1, display: "flex" }}>
+      <div className="main">
         {/* INPUT */}
-        <div style={{ width: "35%", padding: 20, borderRight: "1px solid #ddd", overflow: "auto" }}>
+        <div className="input-panel">
           <h2>Create New Content</h2>
 
           <textarea
@@ -239,7 +268,7 @@ export default function App() {
             <div style={{ marginTop: 15 }}>
               <h4>Agent Pipeline</h4>
               {stages.map((s) => (
-                <p key={s.key} style={{ margin: 2, opacity: s.status === "pending" ? 0.4 : 1 }}>
+                <p key={s.key} className="stage-line" style={{ opacity: s.status === "pending" ? 0.4 : 1 }}>
                   {s.label}
                   {s.detail ? ` (${s.detail})` : ""}
                   {statusIcon(s.status)}
@@ -258,7 +287,7 @@ export default function App() {
         </div>
 
         {/* DISPLAY */}
-        <div style={{ flex: 1, padding: 20, overflow: "auto" }}>
+        <div className="viewer">
           <h2>📖 Content Viewer</h2>
           {selectedBlog ? (
             <>

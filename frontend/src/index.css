@@ -1,11 +1,18 @@
+* {
+  box-sizing: border-box;
+}
+
 :root {
+  --bg: #242424;
+  --border: #3a3a3a;
+
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: var(--bg);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -24,10 +31,9 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 h1 {
@@ -56,6 +62,8 @@ button:focus-visible {
 
 @media (prefers-color-scheme: light) {
   :root {
+    --bg: #ffffff;
+    --border: #dddddd;
     color: #213547;
     background-color: #ffffff;
   }
@@ -64,5 +72,179 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+}
+
+/* ---------- App layout (desktop) ---------- */
+
+.app {
+  display: flex;
+  height: 100vh;
+  height: 100dvh;
+  overflow-wrap: break-word;
+}
+
+.mobile-header {
+  display: none;
+}
+
+.app-title {
+  flex: 1;
+  font-weight: 600;
+}
+
+.hamburger,
+.sidebar-close {
+  display: none;
+}
+
+.sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  padding: 20px;
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.blog-item {
+  width: 100%;
+  margin-bottom: 8px;
+  text-align: left;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  min-width: 0;
+}
+
+.input-panel {
+  width: 35%;
+  min-width: 300px;
+  padding: 20px;
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+}
+
+.input-panel textarea {
+  max-width: 100%;
+}
+
+.stage-line {
+  margin: 2px 0;
+}
+
+.viewer {
+  flex: 1;
+  min-width: 0;
+  padding: 20px;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+}
+
+.viewer img {
+  max-width: 100%;
+}
+
+.viewer pre {
+  overflow-x: auto;
+}
+
+.backdrop {
+  display: none;
+}
+
+/* ---------- Mobile / small screens ---------- */
+
+@media (max-width: 900px) {
+  .app {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  .mobile-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    padding: 10px 14px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hamburger {
+    display: block;
+    font-size: 1.1rem;
+    padding: 0.35em 0.7em;
+  }
+
+  /* Sidebar becomes a slide-in drawer */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: min(80vw, 300px);
+    z-index: 40;
+    background: var(--bg);
+    border-right: 1px solid var(--border);
+    transform: translateX(-105%);
+    transition: transform 0.25s ease;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar-close {
+    display: block;
+    font-size: 1rem;
+    padding: 0.35em 0.65em;
+  }
+
+  .backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 35;
+    background: rgba(0, 0, 0, 0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+
+  .backdrop.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Panels stack vertically; the whole page scrolls */
+  .main {
+    flex-direction: column;
+  }
+
+  .input-panel {
+    width: 100%;
+    min-width: 0;
+    padding: 16px 14px;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    overflow: visible;
+  }
+
+  .viewer {
+    padding: 16px 14px;
+    overflow: visible;
   }
 }
